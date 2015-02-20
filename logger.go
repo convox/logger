@@ -3,19 +3,23 @@ package logger
 import "fmt"
 
 type Logger struct {
-	Namespace string
+	namespace string
 }
 
 func New(ns string) *Logger {
-	return &Logger{Namespace: ns}
+	return &Logger{namespace: ns}
 }
 
 func (l *Logger) At(at string) *Logger {
-	return &Logger{Namespace: fmt.Sprintf("%s at=%s", l.Namespace, at)}
+	return l.Namespace("at=%s", at)
 }
 
 func (l *Logger) Log(format string, args ...interface{}) {
-	fmt.Printf("%s %s\n", l.Namespace, fmt.Sprintf(format, args...))
+	fmt.Printf("%s %s\n", l.namespace, fmt.Sprintf(format, args...))
+}
+
+func (l *Logger) Namespace(format string, args ...interface{}) *Logger {
+	return &Logger{namespace: fmt.Sprintf("%s %s", l.namespace, fmt.Sprintf(format, args...))}
 }
 
 func (l *Logger) Error(err error) {
