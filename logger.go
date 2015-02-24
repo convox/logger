@@ -1,6 +1,9 @@
 package logger
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 type Logger struct {
 	namespace string
@@ -15,7 +18,7 @@ func (l *Logger) At(at string) *Logger {
 }
 
 func (l *Logger) Log(format string, args ...interface{}) {
-	fmt.Printf("%s %s\n", l.namespace, fmt.Sprintf(format, args...))
+	fmt.Printf("date=%s %s %s\n", time.Now().Format("2006-01-02 15:04:05.000"), l.namespace, fmt.Sprintf(format, args...))
 }
 
 func (l *Logger) Namespace(format string, args ...interface{}) *Logger {
