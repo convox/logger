@@ -5,7 +5,7 @@ Easy logging in Go
 ## Examples
 
 ```go
-var log = logger.Namespace("ns=project")
+var log = logger.New("ns=project")
 
 // date="2015-01-01T00:00:00.000000" ns=project foo=bar num=5 pct=68.9 arg="test"
 log.Log("foo=bar num=%d pct=%0.1f arg=%q", 5, 68.99, "test")
