@@ -1,86 +1,53 @@
 package logger
 
 import (
+	"bytes"
 	"fmt"
 	"strings"
 	"testing"
 )
 
-var writer = &BufferWriter{}
-
-var log = &Logger{
-	namespace: "ns=test",
-	writer:    writer,
-	now: func() string {
-		return ""
-	},
-}
+var buffer bytes.Buffer
+var log = NewWriter("ns=test", &buffer)
 
 func TestAt(t *testing.T) {
-	writer.Clear()
+	buffer.Truncate(0)
 	log.At("target").Log("foo=bar")
-	assertEquals(t, writer.Line(), `date="" ns=test at=target foo=bar`)
+	assertContains(t, buffer.String(), `ns=test at=target foo=bar`)
 }
 
 func TestError(t *testing.T) {
-	writer.Clear()
+	buffer.Truncate(0)
 	log.Error(fmt.Errorf("broken"))
-	assertEquals(t, writer.Line(), `date="" ns=test state=error error="broken"`)
+	assertContains(t, buffer.String(), `ns=test state=error error="broken"`)
 }
 
 func TestLog(t *testing.T) {
-	writer.Clear()
+	buffer.Truncate(0)
 	log.Log("string=%q int=%d float=%0.2f", "foo", 42, 3.14159)
-	assertEquals(t, writer.Line(), `date="" ns=test string="foo" int=42 float=3.14`)
+	assertContains(t, buffer.String(), `ns=test string="foo" int=42 float=3.14`)
 }
 
 func TestNamespace(t *testing.T) {
-	writer.Clear()
+	buffer.Truncate(0)
 	log.Namespace("foo=bar").Namespace("baz=qux").Log("fred=barney")
-	assertEquals(t, writer.Line(), `date="" ns=test foo=bar baz=qux fred=barney`)
+	assertContains(t, buffer.String(), `ns=test foo=bar baz=qux fred=barney`)
 }
 
 func TestStart(t *testing.T) {
-	writer.Clear()
+	buffer.Truncate(0)
 	log.Start().Success("num=%d", 42)
-	assertContains(t, writer.Line(), "elapsed=")
+	assertContains(t, buffer.String(), "elapsed=")
 }
 
 func TestSuccess(t *testing.T) {
-	writer.Clear()
+	buffer.Truncate(0)
 	log.Success("num=%d", 42)
-	assertEquals(t, writer.Line(), `date="" ns=test state=success num=42`)
+	assertContains(t, buffer.String(), `ns=test state=success num=42`)
 }
 
 func assertContains(t *testing.T, got, search string) {
 	if strings.Index(got, search) == -1 {
 		t.Errorf("\n   expected: %q\n to contain: %q", got, search)
 	}
-}
-
-func assertEquals(t *testing.T, got, expected interface{}) {
-	if expected != got {
-		t.Errorf("\nexpected: %q\n     got: %q", expected, got)
-	}
-}
-
-type BufferWriter struct {
-	buffer string
-}
-
-func (bw *BufferWriter) Buffer() string {
-	return bw.buffer
-}
-
-func (bw *BufferWriter) Clear() {
-	bw.buffer = ""
-}
-
-func (bw *BufferWriter) Line() string {
-	return strings.Split(bw.Buffer(), "\n")[0]
-}
-
-func (bw *BufferWriter) Write(data []byte) (int, error) {
-	bw.buffer += string(data)
-	return len(data), nil
 }
