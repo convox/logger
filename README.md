@@ -1,10 +1,10 @@
 # logger
 
-Easy logging
+Easy logging in Go
 
 ## Examples
 
-```
+```golang
 var log = logger.Namespace("ns=project")
 
 // date="2015-01-01T00:00:00.000000" foo=bar num=5 pct=68.9 arg="test"
