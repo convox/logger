@@ -6,27 +6,6 @@ import (
 	"testing"
 )
 
-type BufferWriter struct {
-	buffer string
-}
-
-func (bw *BufferWriter) Buffer() string {
-	return bw.buffer
-}
-
-func (bw *BufferWriter) Clear() {
-	bw.buffer = ""
-}
-
-func (bw *BufferWriter) Line() string {
-	return strings.Split(bw.Buffer(), "\n")[0]
-}
-
-func (bw *BufferWriter) Write(data []byte) (int, error) {
-	bw.buffer += string(data)
-	return len(data), nil
-}
-
 var writer = &BufferWriter{}
 
 var log = &Logger{
@@ -83,4 +62,25 @@ func assertEquals(t *testing.T, got, expected interface{}) {
 	if expected != got {
 		t.Errorf("\nexpected: %q\n     got: %q", expected, got)
 	}
+}
+
+type BufferWriter struct {
+	buffer string
+}
+
+func (bw *BufferWriter) Buffer() string {
+	return bw.buffer
+}
+
+func (bw *BufferWriter) Clear() {
+	bw.buffer = ""
+}
+
+func (bw *BufferWriter) Line() string {
+	return strings.Split(bw.Buffer(), "\n")[0]
+}
+
+func (bw *BufferWriter) Write(data []byte) (int, error) {
+	bw.buffer += string(data)
+	return len(data), nil
 }
