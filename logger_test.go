@@ -7,8 +7,10 @@ import (
 	"testing"
 )
 
-var buffer bytes.Buffer
-var log = NewWriter("ns=test", &buffer)
+var (
+	buffer bytes.Buffer
+	log    = NewWriter("ns=test", &buffer)
+)
 
 func TestAt(t *testing.T) {
 	buffer.Truncate(0)
