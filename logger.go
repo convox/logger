@@ -31,13 +31,11 @@ func (l *Logger) Error(err error) {
 }
 
 func (l *Logger) Log(format string, args ...interface{}) {
-	now := time.Now().UTC().Format("2006-01-02T15:04:05.000000")
-
 	if l.started.IsZero() {
-		l.writer.Write([]byte(fmt.Sprintf("date=%q %s %s\n", now, l.namespace, fmt.Sprintf(format, args...))))
+		l.writer.Write([]byte(fmt.Sprintf("%s %s\n", l.namespace, fmt.Sprintf(format, args...))))
 	} else {
 		elapsed := float64(time.Now().Sub(l.started).Nanoseconds()) / 1000
-		l.writer.Write([]byte(fmt.Sprintf("date=%q %s %s elapsed=%0.3f\n", now, l.namespace, fmt.Sprintf(format, args...), elapsed)))
+		l.writer.Write([]byte(fmt.Sprintf("%s %s elapsed=%0.3f\n", l.namespace, fmt.Sprintf(format, args...), elapsed)))
 	}
 }
 
