@@ -34,7 +34,7 @@ func (l *Logger) Log(format string, args ...interface{}) {
 	if l.started.IsZero() {
 		l.writer.Write([]byte(fmt.Sprintf("%s %s\n", l.namespace, fmt.Sprintf(format, args...))))
 	} else {
-		elapsed := float64(time.Now().Sub(l.started).Nanoseconds()) / 1000
+		elapsed := float64(time.Now().Sub(l.started).Nanoseconds()) / 1000000
 		l.writer.Write([]byte(fmt.Sprintf("%s %s elapsed=%0.3f\n", l.namespace, fmt.Sprintf(format, args...), elapsed)))
 	}
 }
