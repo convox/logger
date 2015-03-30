@@ -23,7 +23,11 @@ func NewWriter(ns string, writer io.Writer) *Logger {
 }
 
 func (l *Logger) At(at string) *Logger {
-	return l.Namespace("at=%s", at)
+	return l.Replace("at", at)
+}
+
+func (l *Logger) Step(step string) *Logger {
+	return l.Replace("step", step)
 }
 
 func (l *Logger) Error(err error) {
@@ -45,6 +49,11 @@ func (l *Logger) Namespace(format string, args ...interface{}) *Logger {
 		started:   l.started,
 		writer:    l.writer,
 	}
+}
+
+func (l *Logger) Replace(key, value string) *Logger {
+	// TODO: actually replace
+	return l.Namespace(fmt.Sprintf("%s=%s", key, value))
 }
 
 func (l *Logger) Start() *Logger {
