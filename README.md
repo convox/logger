@@ -1,5 +1,9 @@
 # logger
 
+<a href="https://travis-ci.org/ddollar/logger">
+  <img align="right" src="https://travis-ci.org/ddollar/logger.svg?branch=master">
+</a>
+
 Easy logging in Go
 
 ## Examples
