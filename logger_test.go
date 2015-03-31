@@ -3,6 +3,7 @@ package logger
 import (
 	"bytes"
 	"fmt"
+	"regexp"
 	"strings"
 	"testing"
 )
@@ -27,7 +28,14 @@ func TestAtOverrides(t *testing.T) {
 func TestError(t *testing.T) {
 	buffer.Truncate(0)
 	log.Error(fmt.Errorf("broken"))
-	assertLine(t, buffer.String(), `ns=test state=error error="broken"`)
+
+	lines := strings.Split(strings.TrimSpace(buffer.String()), "\n")
+
+	assertMatch(t, lines[0], `ns=test state=error id=[0-9]+ message="broken"`)
+
+	for i := 1; i < len(lines); i++ {
+		assertMatch(t, lines[i], fmt.Sprintf(`ns=test state=error id=[0-9]+ line=%d trace="[^"]*"`, i))
+	}
 }
 
 func TestLog(t *testing.T) {
@@ -88,5 +96,13 @@ func assertLine(t *testing.T, got, search string) {
 	search = search + "\n"
 	if search != got {
 		t.Errorf("\n   expected: %q\n to be: %q", got, search)
+	}
+}
+
+func assertMatch(t *testing.T, got, search string) {
+	r := regexp.MustCompile(search)
+
+	if !r.MatchString(got) {
+		t.Errorf("\n   expected: %q\n to match: %q", got, search)
 	}
 }

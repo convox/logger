@@ -1,10 +1,14 @@
 package logger
 
 import (
+	"bufio"
+	"bytes"
 	"fmt"
 	"io"
+	"math/rand"
 	"os"
 	"regexp"
+	"runtime"
 	"time"
 )
 
@@ -32,7 +36,20 @@ func (l *Logger) Step(step string) *Logger {
 }
 
 func (l *Logger) Error(err error) {
-	l.Log("state=error error=%q", err)
+	id := rand.Int31()
+
+	l.Log("state=error id=%d message=%q", id, err)
+
+	stack := make([]byte, 102400)
+	runtime.Stack(stack, false)
+
+	scanner := bufio.NewScanner(bytes.NewReader(stack))
+	line := 1
+
+	for scanner.Scan() {
+		l.Log("state=error id=%d line=%d trace=%q", id, line, scanner.Text())
+		line += 1
+	}
 }
 
 func (l *Logger) Log(format string, args ...interface{}) {
