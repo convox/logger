@@ -76,11 +76,7 @@ func (l *Logger) Namespace(format string, args ...interface{}) *Logger {
 func (l *Logger) Replace(key, value string) *Logger {
 	pair := fmt.Sprintf("%s=%s", key, value)
 
-	r, err := regexp.Compile(fmt.Sprintf(`\s%s=\S+`, key))
-
-	if err != nil {
-		panic(err)
-	}
+	r := regexp.MustCompile(fmt.Sprintf(`\s%s=\S+`, key))
 
 	if r.MatchString(l.namespace) {
 		return &Logger{
