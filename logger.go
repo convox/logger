@@ -12,6 +12,10 @@ import (
 	"time"
 )
 
+func init() {
+	rand.Seed(time.Now().UTC().UnixNano())
+}
+
 type Logger struct {
 	namespace string
 	now       func() string
