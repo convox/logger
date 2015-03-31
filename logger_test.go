@@ -17,6 +17,11 @@ func NewLogger() *Logger {
 	return NewWriter("ns=test", &buffer)
 }
 
+func TestNew(t *testing.T) {
+	log := New("ns=test")
+	assertEquals(t, log.namespace, "ns=test")
+}
+
 func TestAt(t *testing.T) {
 	log := NewLogger()
 	log.At("target").Log("foo=bar")
@@ -93,6 +98,12 @@ func TestSuccess(t *testing.T) {
 func assertContains(t *testing.T, got, search string) {
 	if strings.Index(got, search) == -1 {
 		t.Errorf("\n   expected: %q\n to contain: %q", got, search)
+	}
+}
+
+func assertEquals(t *testing.T, got, search string) {
+	if got != search {
+		t.Errorf("\n   expected: %q\n to equal: %q", got, search)
 	}
 }
 
