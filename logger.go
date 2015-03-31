@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"regexp"
 	"time"
 )
 
@@ -52,8 +53,23 @@ func (l *Logger) Namespace(format string, args ...interface{}) *Logger {
 }
 
 func (l *Logger) Replace(key, value string) *Logger {
-	// TODO: actually replace
-	return l.Namespace(fmt.Sprintf("%s=%s", key, value))
+	pair := fmt.Sprintf("%s=%s", key, value)
+
+	r, err := regexp.Compile(fmt.Sprintf(`\s%s=\S+`, key))
+
+	if err != nil {
+		panic(err)
+	}
+
+	if r.MatchString(l.namespace) {
+		return &Logger{
+			namespace: r.ReplaceAllString(l.namespace, " "+pair),
+			started:   l.started,
+			writer:    l.writer,
+		}
+	} else {
+		return l.Namespace(fmt.Sprintf("%s=%s", key, value))
+	}
 }
 
 func (l *Logger) Start() *Logger {
