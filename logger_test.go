@@ -24,13 +24,13 @@ func TestNew(t *testing.T) {
 
 func TestAt(t *testing.T) {
 	log := NewLogger()
-	log.At("target").Log("foo=bar")
+	log.At("target").Logf("foo=bar")
 	assertLine(t, buffer.String(), `ns=test at=target foo=bar`)
 }
 
 func TestAtOverrides(t *testing.T) {
 	log := NewLogger()
-	log.At("target1").At("target2").Log("foo=bar")
+	log.At("target1").At("target2").Logf("foo=bar")
 	assertLine(t, buffer.String(), `ns=test at=target2 foo=bar`)
 }
 
@@ -49,25 +49,25 @@ func TestError(t *testing.T) {
 
 func TestLog(t *testing.T) {
 	log := NewLogger()
-	log.Log("string=%q int=%d float=%0.2f", "foo", 42, 3.14159)
+	log.Logf("string=%q int=%d float=%0.2f", "foo", 42, 3.14159)
 	assertLine(t, buffer.String(), `ns=test string="foo" int=42 float=3.14`)
 }
 
 func TestNamespace(t *testing.T) {
 	log := NewLogger()
-	log.Namespace("foo=bar").Namespace("baz=qux").Log("fred=barney")
+	log.Namespace("foo=bar").Namespace("baz=qux").Logf("fred=barney")
 	assertLine(t, buffer.String(), `ns=test foo=bar baz=qux fred=barney`)
 }
 
 func TestReplace(t *testing.T) {
 	log := NewLogger()
-	log.Namespace("baz=qux1").Replace("baz", "qux2").Log("foo=bar")
+	log.Namespace("baz=qux1").Replace("baz", "qux2").Logf("foo=bar")
 	assertLine(t, buffer.String(), `ns=test baz=qux2 foo=bar`)
 }
 
 func TestReplaceExisting(t *testing.T) {
 	log := NewLogger()
-	log.Namespace("foo=bar").Namespace("baz=qux").Replace("baz", "zux").Log("thud=grunt")
+	log.Namespace("foo=bar").Namespace("baz=qux").Replace("baz", "zux").Logf("thud=grunt")
 	assertLine(t, buffer.String(), `ns=test foo=bar baz=zux thud=grunt`)
 }
 
@@ -79,13 +79,13 @@ func TestStart(t *testing.T) {
 
 func TestStep(t *testing.T) {
 	log := NewLogger()
-	log.Step("target").Log("foo=bar")
+	log.Step("target").Logf("foo=bar")
 	assertLine(t, buffer.String(), `ns=test step=target foo=bar`)
 }
 
 func TestStepOverrides(t *testing.T) {
 	log := NewLogger()
-	log.Step("target1").Step("target2").Log("foo=bar")
+	log.Step("target1").Step("target2").Logf("foo=bar")
 	assertLine(t, buffer.String(), `ns=test step=target2 foo=bar`)
 }
 

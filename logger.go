@@ -42,7 +42,7 @@ func (l *Logger) Step(step string) *Logger {
 func (l *Logger) Error(err error) {
 	id := rand.Int31()
 
-	l.Log("state=error id=%d message=%q", id, err)
+	l.Logf("state=error id=%d message=%q", id, err)
 
 	stack := make([]byte, 102400)
 	runtime.Stack(stack, false)
@@ -51,12 +51,12 @@ func (l *Logger) Error(err error) {
 	line := 1
 
 	for scanner.Scan() {
-		l.Log("state=error id=%d line=%d trace=%q", id, line, scanner.Text())
+		l.Logf("state=error id=%d line=%d trace=%q", id, line, scanner.Text())
 		line += 1
 	}
 }
 
-func (l *Logger) Log(format string, args ...interface{}) {
+func (l *Logger) Logf(format string, args ...interface{}) {
 	if l.started.IsZero() {
 		l.writer.Write([]byte(fmt.Sprintf("%s %s\n", l.namespace, fmt.Sprintf(format, args...))))
 	} else {
@@ -98,5 +98,5 @@ func (l *Logger) Start() *Logger {
 }
 
 func (l *Logger) Success(format string, args ...interface{}) {
-	l.Log("state=success %s", fmt.Sprintf(format, args...))
+	l.Logf("state=success %s", fmt.Sprintf(format, args...))
 }
