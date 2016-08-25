@@ -9,6 +9,8 @@ import (
 	"os"
 	"regexp"
 	"runtime"
+	"runtime/debug"
+	"strings"
 	"time"
 )
 
@@ -40,13 +42,23 @@ func (l *Logger) Step(step string) *Logger {
 }
 
 func (l *Logger) Error(err error) {
+	if _, file, line, ok := runtime.Caller(1); ok {
+		l.Logf("state=error error=%q location=%q", strings.Replace(err.Error(), "\n", " ", -1), fmt.Sprintf("%s:%d", file, line))
+	} else {
+		l.Logf("state=error error=%q", err)
+	}
+}
+
+func (l *Logger) Errorf(format string, args ...interface{}) {
+	l.Error(fmt.Errorf(format, args...))
+}
+
+func (l *Logger) ErrorBacktrace(err error) {
 	id := rand.Int31()
 
 	l.Logf("state=error id=%d message=%q", id, err)
 
-	stack := make([]byte, 102400)
-	runtime.Stack(stack, false)
-
+	stack := debug.Stack()
 	scanner := bufio.NewScanner(bytes.NewReader(stack))
 	line := 1
 
@@ -97,6 +109,10 @@ func (l *Logger) Start() *Logger {
 	}
 }
 
-func (l *Logger) Success(format string, args ...interface{}) {
+func (l *Logger) Success() {
+	l.Logf("state=success")
+}
+
+func (l *Logger) Successf(format string, args ...interface{}) {
 	l.Logf("state=success %s", fmt.Sprintf(format, args...))
 }
