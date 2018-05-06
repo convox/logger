@@ -40,7 +40,7 @@ func TestError(t *testing.T) {
 
 	lines := strings.Split(strings.TrimSpace(buffer.String()), "\n")
 
-	assertMatch(t, lines[0], `ns=test state=error id=[0-9]+ message="broken"`)
+	assertMatch(t, lines[0], `ns=test state=error error="broken" location="github.com/convox/logger/logger_test.go:[0-9]+"`)
 
 	for i := 1; i < len(lines); i++ {
 		assertMatch(t, lines[i], fmt.Sprintf(`ns=test state=error id=[0-9]+ line=%d trace="[^"]*"`, i))
@@ -73,7 +73,7 @@ func TestReplaceExisting(t *testing.T) {
 
 func TestStart(t *testing.T) {
 	log := NewLogger()
-	log.Start().Success("num=%d", 42)
+	log.Start().Successf("num=%d", 42)
 	assertContains(t, buffer.String(), "elapsed=")
 }
 
@@ -91,7 +91,7 @@ func TestStepOverrides(t *testing.T) {
 
 func TestSuccess(t *testing.T) {
 	log := NewLogger()
-	log.Success("num=%d", 42)
+	log.Successf("num=%d", 42)
 	assertLine(t, buffer.String(), `ns=test state=success num=42`)
 }
 
@@ -118,6 +118,6 @@ func assertMatch(t *testing.T, got, search string) {
 	r := regexp.MustCompile(search)
 
 	if !r.MatchString(got) {
-		t.Errorf("\n   expected: %q\n to match: %q", got, search)
+		t.Errorf("\n   expected: %q\n   to match: %q", got, search)
 	}
 }
