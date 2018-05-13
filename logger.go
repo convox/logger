@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"math/rand"
 	"os"
 	"path/filepath"
@@ -18,6 +19,8 @@ import (
 func init() {
 	rand.Seed(time.Now().UTC().UnixNano())
 }
+
+var Discard = NewWriter("", ioutil.Discard)
 
 type Logger struct {
 	namespace string
